@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Duolingo × Spotify: Turning Music Consumption Into Language Learning</title>
+<style>
+:root {
+  --bg: #fbfbf9; --card: #ffffff; --text: #1a1a1a; --muted: #5b5f5a; --border: #e6e6e2;
+  --duo: #58cc02; --duo-dark: #3d9401; --spot: #1db954;
+  --accent-bg: #f0f9ea; --table-head: #f4f4f1; --code-bg: #f4f4f1;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); box-sizing: border-box;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b; --card: #1b1f24; --text: #eef0ee; --muted: #9aa39a;
+    --border: #2a2f35; --accent-bg: #182619; --table-head: #20252b; --code-bg: #20252b;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171b; --card: #1b1f24; --text: #eef0ee; --muted: #9aa39a;
+  --border: #2a2f35; --accent-bg: #182619; --table-head: #20252b; --code-bg: #20252b;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; }
+.wrap { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+header.hero { border-bottom: 3px solid var(--duo); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.badge-row { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.badge { font-size: .72rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+  padding: .25rem .6rem; border-radius: 99px; color: #fff; }
+.badge.duo { background: var(--duo-dark); } .badge.spot { background: var(--spot); } .badge.status { background: var(--muted); }
+h1 { font-size: 1.6rem; margin: 0 0 .4rem; line-height: 1.25; }
+.subtitle { color: var(--muted); font-size: .95rem; margin: 0; }
+.meta { color: var(--muted); font-size: .8rem; margin-top: .8rem; }
+nav.toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 2.5rem; font-size: .88rem; }
+nav.toc strong { display: block; margin-bottom: .5rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+nav.toc ol { margin: 0; padding-left: 1.1rem; columns: 2; column-gap: 1.5rem; }
+nav.toc li { margin-bottom: .35rem; break-inside: avoid; }
+nav.toc a { color: var(--text); text-decoration: none; }
+section { margin-bottom: 2.75rem; scroll-margin-top: 1rem; }
+h2 { font-size: 1.15rem; display: flex; align-items: center; gap: .5rem; border-left: 4px solid var(--duo); padding-left: .65rem; margin-bottom: 1rem; }
+h3 { font-size: .95rem; margin: 1.2rem 0 .5rem; }
+p { margin: 0 0 .8rem; }
+ul, ol.plain { margin: 0 0 .8rem; padding-left: 1.3rem; }
+li { margin-bottom: .35rem; }
+.callout { background: var(--accent-bg); border: 1px solid var(--border); border-left: 4px solid var(--duo);
+  border-radius: 8px; padding: .9rem 1.1rem; font-size: .9rem; margin: 1rem 0; }
+.callout strong { display: block; margin-bottom: .25rem; font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; color: var(--duo-dark); }
+.callout.quote { font-style: italic; border-left-color: var(--spot); }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: .8rem 0 1.2rem; }
+.table-scroll { overflow-x: auto; }
+th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--table-head); font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+.persona-grid { display: grid; grid-template-columns: 1fr; gap: .9rem; }
+.persona-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; }
+.persona-card h4 { margin: 0 0 .3rem; font-size: .95rem; }
+.persona-card .tag { font-size: .72rem; color: var(--muted); margin-bottom: .5rem; }
+.persona-card .trigger { font-size: .82rem; color: var(--duo-dark); font-weight: 600; margin-top: .5rem; }
+.journey { display: flex; flex-direction: column; gap: 0; }
+.journey-step { display: flex; gap: .9rem; padding: 1rem 0; border-bottom: 1px dashed var(--border); }
+.journey-step:last-child { border-bottom: none; }
+.step-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--duo);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 700; }
+.step-body h4 { margin: 0 0 .4rem; font-size: .92rem; }
+.step-body ul { margin: 0; padding-left: 1.1rem; font-size: .84rem; color: var(--muted); }
+.step-body li { margin-bottom: .25rem; }
+.feature-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.3rem; margin-bottom: 1rem; }
+.feature-block h4 { margin: 0 0 .8rem; font-size: 1rem; }
+.moscow .row { display: flex; gap: .8rem; align-items: flex-start; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: 8px; background: var(--card); margin-bottom: .6rem; }
+.moscow .row span.tag { flex-shrink: 0; font-size: .7rem; font-weight: 700; text-transform: uppercase; padding: .2rem .5rem; border-radius: 5px; }
+.tag.must { background: #ffe3e3; color: #a30d0d; } .tag.should { background: #fff3d6; color: #8a5a00; }
+.tag.could { background: #e3f1ff; color: #0a5ba3; } .tag.wont { background: #eaeaea; color: #555; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tag.must { background: #3a1414; color: #ff8c8c; }
+  :root:not([data-theme="light"]) .tag.should { background: #3a2e0a; color: #ffcf6b; }
+  :root:not([data-theme="light"]) .tag.could { background: #0f2a3a; color: #7fc4ff; }
+  :root:not([data-theme="light"]) .tag.wont { background: #2a2a2a; color: #aaa; }
+}
+footer { color: var(--muted); font-size: .78rem; text-align: center; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1.2rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="badge-row"><span class="badge duo">Duolingo</span><span class="badge spot">Spotify</span><span class="badge status">PRD · v2.0</span></div>
+  <h1>Duolingo × Spotify: Turning Music Consumption Into Language Learning</h1>
+  <p class="subtitle">A cross-app growth partnership, modeled on Duolingo's existing playbook (Brawl Stars crossover, Duo Cup World Cup campaign)</p>
+  <p class="meta">Product Case Study · Author: Prathmesh Sakore · Product Management Portfolio Piece</p>
+</header>
+
+<nav class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#summary">Executive Summary</a></li>
+    <li><a href="#strategic">Strategic Alignment: Why Spotify, Why Now</a></li>
+    <li><a href="#personas">Personas &amp; Intent Triggers</a></li>
+    <li><a href="#journey">End-to-End User Journey</a></li>
+    <li><a href="#features">Core Feature Specs (MVP Scope)</a></li>
+    <li><a href="#prioritization">Feature Prioritization (RICE)</a></li>
+    <li><a href="#architecture">Technical Architecture</a></li>
+    <li><a href="#gtm">GTM Strategy</a></li>
+    <li><a href="#metrics">Success &amp; Guardrail Metrics</a></li>
+    <li><a href="#risks">Risks &amp; Mitigations</a></li>
+    <li><a href="#monetization">Monetization</a></li>
+    <li><a href="#scope">MVP Scope Summary</a></li>
+  </ol>
+</nav>
+
+<section id="summary">
+  <h2>1. Executive Summary</h2>
+  <p>Duolingo's crossover into Brawl Stars, and its reactive, gamified marketing during the 2026 World Cup (Duo Cup), proved that Duolingo grows fastest by borrowing attention from platforms people already use daily — not by asking users to carve out separate "study time."</p>
+  <p>This PRD proposes the next channel in that playbook: <strong>Spotify.</strong> Instead of a limited-time crossover event, this is a persistent, always-on feature: a lightweight lesson generated from the lyrics of songs users are already streaming, surfaced via a native in-app widget, with Duolingo returning engaged learners to Spotify through a cross-app reward loop.</p>
+  <p>Where Brawl Stars proved novelty-driven acquisition and Duo Cup proved gamified retention, Spotify is chosen to prove <strong>habit-stacking</strong> — attaching language practice to something users already do every day, at a frequency neither prior partnership could sustain.</p>
+</section>
+
+<section id="strategic">
+  <h2>2. Strategic Alignment: Why Spotify &amp; Why Now?</h2>
+  <p>Expanding Duolingo from isolated study time to an always-on daily lifestyle habit.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th>The Problem We're Solving</th><th>Why This Partnership Wins</th></tr>
+    <tr><td><strong>People listen without understanding.</strong> Millions stream songs in Spanish, Korean, or French every day, but have no idea what the lyrics mean. That's a huge group of interested learners sitting right in front of us.</td>
+        <td><strong>Tapping into a massive daily audience.</strong> Spotify has over 600 million daily listeners who are already playing this music. We don't have to find new users — they are already there.</td></tr>
+    <tr><td><strong>Isolated study time causes churn.</strong> Opening a separate app just to "study" feels like homework. When life gets busy, study habits are the first thing people drop.</td>
+        <td><strong>Building on existing habits (habit-stacking).</strong> Instead of asking people to make time for Duolingo, we attach 2-minute lessons to things they already do daily — commuting, walking, working out.</td></tr>
+  </table>
+  </div>
+  <div class="callout quote">"This builds on a pattern Duolingo already runs — from Brawl Stars to World Cup marketing."</div>
+</section>
+
+<section id="personas">
+  <h2>3. User Personas &amp; Intent Triggers</h2>
+  <div class="persona-grid">
+    <div class="persona-card">
+      <h4>The Lyric-Curious Listener</h4>
+      <div class="tag">Spotify-primary · No Duolingo account</div>
+      <p>Streams non-English music daily (K-pop, reggaeton, Afrobeats). Wants to know what a favorite song means but has no easy way to find out mid-listen.</p>
+      <div class="trigger">Intent trigger: hearing a song on repeat without understanding the lyrics</div>
+    </div>
+    <div class="persona-card">
+      <h4>The Lapsed Learner</h4>
+      <div class="tag">Has a Duolingo account · Inactive 30+ days</div>
+      <p>Already has language intent and prior investment, but the standalone-app habit didn't stick.</p>
+      <div class="trigger">Intent trigger: encountering a song in their target language, re-surfacing dormant motivation</div>
+    </div>
+    <div class="persona-card">
+      <h4>The Active Streaker</h4>
+      <div class="tag">Active Duolingo user · High streak</div>
+      <p>Already motivated; the value here is retention and delight — turning passive commute time into an extra practice rep without feeling like more homework.</p>
+      <div class="trigger">Intent trigger: wanting an easy, low-effort way to protect today's streak</div>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <h2>4. End-to-End User Journey</h2>
+  <p>How seamless cross-app integration turns a Spotify listening session into a Duolingo lesson.</p>
+  <div class="journey">
+    <div class="journey-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h4>Spotify CTA</h4>
+        <ul>
+          <li><strong>Targeted trigger:</strong> a small "Learn this song" chip appears on the lyrics view for supported non-English tracks.</li>
+          <li><strong>User eligibility:</strong> shown to users with active or expired Duolingo accounts, or those who opt in via a one-time prompt.</li>
+          <li><strong>Action:</strong> tapping the chip initiates the cross-app learning handoff.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><h4>Deep Link Handoff</h4>
+        <ul>
+          <li><strong>Data transfer:</strong> firing the chip sends song ID, artist, and detected-language payload into the Duolingo app.</li>
+          <li><strong>Edge-case handling:</strong> directs to the installed Duolingo app, or a lightweight web view for users without it.</li>
+          <li><strong>Frictionless entry:</strong> opens immediately, no manual setup or searching.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h4>Duolingo Lesson</h4>
+        <ul>
+          <li><strong>Custom content:</strong> opens directly to a 2–3 minute interactive lesson built from that song's lyrics.</li>
+          <li><strong>Key exercises:</strong> vocabulary flashcards from key phrases and lyric fill-in-the-blank drills.</li>
+          <li><strong>Comprehension check:</strong> ends with a quick check to reinforce newly learned song vocabulary.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><h4>Reward Loop</h4>
+        <ul>
+          <li><strong>Duolingo side:</strong> awards XP and preserves/extends streak credit upon lesson completion.</li>
+          <li><strong>Spotify side:</strong> unlocks a "Song Unlocked" badge displayed back on that track's lyrics page.</li>
+          <li><strong>Growth loop:</strong> closes the loop by driving repeat listens with full lyric understanding.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <h2>5. Core Feature Specifications (MVP Scope)</h2>
+
+  <div class="feature-block">
+    <h4>Feature 1 — CEFR Lyric Parsing &amp; Song Selection</h4>
+    <p><strong>Mechanism &amp; rules:</strong></p>
+    <ul>
+      <li><strong>Automated classification:</strong> maps Spotify lyrics to standard CEFR levels (A1–C2) based on vocabulary frequency and syntax complexity.</li>
+      <li><strong>Smart filtering:</strong> hides prompts for tracks exceeding the learner's current level, to prevent frustration.</li>
+      <li><strong>Safety &amp; quality pipeline:</strong> filters out explicit tracks and heavy slang in v1 to protect brand reputation.</li>
+      <li><strong>Template pre-processing:</strong> pre-builds 2-minute lesson templates (5–8 key terms + 1 grammar pattern).</li>
+    </ul>
+    <p><strong>Success metrics:</strong> Classification precision ≥ 95% alignment with CEFR standards · Zero explicit-content leaks in auto-generated lessons · Modal conversion rate (% who click "Start Learning This Song").</p>
+  </div>
+
+  <div class="feature-block">
+    <h4>Feature 2 — Contextual In-App Discovery (Spotify Widget)</h4>
+    <p><strong>Mechanism &amp; rules:</strong></p>
+    <ul>
+      <li><strong>Dynamic widget injection:</strong> embeds a native "Learn this song with Duolingo" prompt directly inside the Spotify player view for foreign-language tracks.</li>
+      <li><strong>Targeted triggering:</strong> displays dynamically based on detected song language and Duolingo profile status.</li>
+      <li><strong>One-tap entry:</strong> tapping the widget initiates the deep-linking sequence straight into the lesson.</li>
+    </ul>
+    <p><strong>Success metrics:</strong> Widget CTR (% of listeners who tap the chip) · Top-of-funnel acquisition (new Duolingo sign-ups initiated from Spotify).</p>
+  </div>
+
+  <div class="feature-block">
+    <h4>Feature 3 — Interactive Lyric Micro-Lessons (Duolingo App)</h4>
+    <p><strong>Mechanism &amp; rules:</strong></p>
+    <ul>
+      <li><strong>Audio-anchored drills:</strong> plays a 5-second audio snippet of the actual track alongside fill-in-the-blank vocabulary challenges.</li>
+      <li><strong>Real-time pedagogical feedback:</strong> provides immediate translation breakdowns and grammar explanations (e.g. "denke = I think").</li>
+      <li><strong>Bite-sized pacing:</strong> designed to take under 120 seconds, awarding XP and preserving daily streaks.</li>
+    </ul>
+    <p><strong>Success metrics:</strong> Lesson completion rate (% of started song lessons finished) · D1 retention uplift (lift in next-day app open rate for users completing song drills).</p>
+  </div>
+</section>
+
+<section id="prioritization">
+  <h2>6. Feature Prioritization Framework</h2>
+  <div class="callout"><strong>Strategic takeaway</strong>The Spotify In-App Widget yields the highest RICE score (135), making it the primary P0 launch driver due to maximum top-of-funnel reach and minimal effort.</div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Priority</th><th>Feature</th><th>Reach (1–10)</th><th>Impact (1–3)</th><th>Confidence (%)</th><th>Effort (1–5)</th><th>RICE Score</th><th>MVP Status</th></tr>
+    <tr><td>1</td><td>Spotify In-App Discovery Widget</td><td>10</td><td>3</td><td>90%</td><td>2</td><td><strong>135</strong></td><td>P0 (Must-Have)</td></tr>
+    <tr><td>2</td><td>CEFR Lyric Parsing &amp; Safety Engine</td><td>9</td><td>3</td><td>80%</td><td>3</td><td><strong>72</strong></td><td>P0 (Must-Have)</td></tr>
+    <tr><td>3</td><td>Interactive Lyric Micro-Lessons</td><td>7</td><td>2</td><td>70%</td><td>3</td><td><strong>33</strong></td><td>P1 (Should-Have)</td></tr>
+  </table>
+  </div>
+  <p style="font-size:.8rem;color:var(--muted);">RICE Score = (Reach × Impact × Confidence) ÷ Effort, scaled ×10 for readability.</p>
+</section>
+
+<section id="architecture">
+  <h2>7. Technical Architecture &amp; Deep Linking Mechanics</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Layer</th><th>Responsibility</th></tr>
+    <tr><td><strong>Spotify client</strong></td><td>Renders the widget/CTA on eligible tracks; constructs a signed deep link (<code>duolingo://song-lesson?track_id=&amp;lang=&amp;source=spotify</code>) with a mobile web fallback if the app isn't installed</td></tr>
+    <tr><td><strong>Content pipeline (offline/batch)</strong></td><td>Ingests lyrics + metadata → CEFR classifier → safety filter → template-based lesson generator → human review queue → published lesson store</td></tr>
+    <tr><td><strong>Duolingo lesson service</strong></td><td>Resolves incoming deep link params to a pre-generated lesson; falls back to a generic level-appropriate song if no lesson exists yet for that exact track</td></tr>
+    <tr><td><strong>Cross-app signal service</strong></td><td>On lesson completion, fires a webhook to Spotify to unlock the "Song Unlocked" badge; stores anonymized completion data for both teams' analytics</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="gtm">
+  <h2>8. GTM Strategy</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Phase</th><th>Timeline</th><th>Scope</th><th>Key Channels / Activities</th><th>Success Metric</th></tr>
+    <tr><td>1. Internal Dogfood</td><td>Weeks 1–2</td><td>Duolingo + Spotify employees only</td><td>Validate deep link reliability, lesson quality, cross-app badge sync</td><td>Zero critical bugs before external launch</td></tr>
+    <tr><td>2. Pilot Market Launch</td><td>Weeks 3–8</td><td>Single market, single language (e.g. South Korea, Korean)</td><td>Spotify lyrics-page CTA (no paid promotion) + organic social teaser</td><td>CTA → Lesson Completion Rate &gt; 25%</td></tr>
+    <tr><td>3. Language Expansion</td><td>Weeks 9–14</td><td>Top 5 Duolingo languages by learner volume</td><td>Same CTA mechanic scaled + Duolingo owned-channel push (email, in-app)</td><td>New Account Creation Rate &gt; 8%</td></tr>
+    <tr><td>4. Global Launch + Co-Marketing</td><td>Week 15+</td><td>All markets</td><td>Joint PR moment, timed to a major non-English album release</td><td>Lapsed-User Reactivation Rate &gt; 15%</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="metrics">
+  <h2>9. Success &amp; Guardrail Metrics</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Metric</th><th>Definition</th><th>Target</th></tr>
+    <tr><td><strong>North Star:</strong> CTA → Lesson Completion Rate</td><td>% of chip/widget taps resulting in a finished micro-lesson</td><td>&gt; 25%</td></tr>
+    <tr><td>New Account Creation Rate</td><td>% of non-Duolingo users who sign up after their first song lesson</td><td>&gt; 8%</td></tr>
+    <tr><td>Lapsed-User Reactivation Rate</td><td>% of dormant accounts who complete a lesson and return within 7 days</td><td>&gt; 15%</td></tr>
+    <tr><td><em>Guardrail:</em> Spotify Session Impact</td><td>Change in average listening session length for users who see the widget</td><td>No decrease &gt; 2%</td></tr>
+    <tr><td><em>Guardrail:</em> Lesson Quality Complaints</td><td>Reports of inaccurate/low-quality auto-generated lessons</td><td>&lt; 1% of lessons served</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="risks">
+  <h2>10. Risks &amp; Mitigations</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Risk</th><th>Mitigation</th></tr>
+    <tr><td>Auto-generated lessons contain errors at scale</td><td>Human review gate before publishing; in-lesson "report an issue" link</td></tr>
+    <tr><td>Explicit or culturally sensitive lyrics used in lessons</td><td>Explicit-content flag from Spotify's metadata excludes tracks from the auto-pipeline by default</td></tr>
+    <tr><td>Widget/CTA fatigue reduces Spotify UX quality</td><td>Frequency capping (max 1 impression per session); permanent dismiss option</td></tr>
+    <tr><td>Deep link fails on older app versions</td><td>Web-based fallback lesson requiring no app update</td></tr>
+    <tr><td>Feature only appeals to a narrow slice of catalog (non-English tracks)</td><td>Tracked as a targeted acquisition/retention channel, judged against its own funnel — not overall DAU</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="monetization">
+  <h2>11. Monetization &amp; Business Model</h2>
+  <ul>
+    <li><strong>No direct revenue share in v1</strong> — modeled as a mutual growth partnership, matching the Brawl Stars precedent, which was a brand/audience exchange rather than a paid placement.</li>
+    <li><strong>Duolingo upside:</strong> new and reactivated users who convert to Super Duolingo downstream — tracked via a 90-day cohort conversion rate versus standard acquisition channels.</li>
+    <li><strong>Spotify upside:</strong> a differentiated lyrics-page engagement feature that indirectly supports ad impressions and Premium retention.</li>
+    <li><strong>Future paid extension (Could-Have):</strong> co-branded seasonal campaigns or sponsored artist-specific lesson packs tied to album releases.</li>
+  </ul>
+</section>
+
+<section id="scope">
+  <h2>12. MVP Scope Summary</h2>
+  <div class="moscow">
+    <div class="row"><span class="tag must">Must</span><div>Spotify In-App Discovery Widget · CEFR Lyric Parsing &amp; Safety Engine · Deep link handoff · Song micro-lesson · XP/streak reward</div></div>
+    <div class="row"><span class="tag should">Should</span><div>Interactive Lyric Micro-Lessons with audio-anchored drills · "Song Unlocked" badge shown back on Spotify · D1 retention tracking</div></div>
+    <div class="row"><span class="tag could">Could</span><div>Artist-specific themed lesson packs · Shareable "I learned this song" social card · Co-branded seasonal campaigns</div></div>
+    <div class="row"><span class="tag wont">Won't (v1)</span><div>Full song translation/subtitling · Real-time pronunciation scoring · Languages outside Duolingo's top 5 by learner volume</div></div>
+  </div>
+</section>
+
+<footer>Duolingo × Spotify PRD · Product Management Portfolio Case Study · v2.0</footer>
+
+</div>
+</body>
+</html>
