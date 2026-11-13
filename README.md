@@ -24,7 +24,7 @@ A "Learn this song" chip on Spotify's lyrics view hands off to a short Duolingo 
 
 ## What's in this repo
 - `docs/` – PRD and strategy deck
-- `demo.html` – clickable prototype (open it in a browser)
+- `index.html` – clickable prototype (open it in a browser)
 
 ## About the prototype
 Front-end only. Songs and lyrics are fictional, audio is a synthesized tone, and there are no real Spotify or Duolingo APIs. It demonstrates:
