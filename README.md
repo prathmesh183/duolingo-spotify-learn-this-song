@@ -5,7 +5,7 @@ Author: Prathmesh Sakore
 
 Turn the songs people already stream on Spotify into 2-minute Duolingo lessons.
 
-**Live prototype:** _add your GitHub Pages link here_
+**Live prototype:** https://prathmesh183.github.io/duolingo-spotify-learn-this-song/
 
 ## The problem
 Millions of people stream songs in Spanish, Korean or French without understanding the lyrics, and opening a separate app just to "study" is the first habit people drop.
@@ -24,7 +24,7 @@ A "Learn this song" chip on Spotify's lyrics view hands off to a short Duolingo 
 
 ## What's in this repo
 - `docs/` – PRD and strategy deck
-- `index.html` – clickable prototype (open it in a browser)
+- `demo.html` – clickable prototype (open it in a browser)
 
 ## About the prototype
 Front-end only. Songs and lyrics are fictional, audio is a synthesized tone, and there are no real Spotify or Duolingo APIs. It demonstrates:
