@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Duolingo × Spotify: Learn this song (prototype)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f4ef;--ink:#1d2320;--mut:#5e6862;--card:#fff;--line:#d9dcd4;--sp:#1db954;--du:#58cc02;--duD:#46a302;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15191a;--ink:#eef1ec;--mut:#9aa59e;--card:#1f2425;--line:#333b3c}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 Figtree,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px;display:grid;grid-template-columns:minmax(0,375px) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+h1{font-size:22px;margin:0 0 4px;font-weight:800}h2{font-size:14px;margin:18px 0 8px;font-weight:800}
+.mut{color:var(--mut)}.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{font:600 13px Figtree,sans-serif;padding:7px 11px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:20px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
+.phone{width:100%;max-width:375px;height:700px;border-radius:34px;border:8px solid #0b0d0c;overflow:hidden;position:relative;margin:0 auto;background:#121212;color:#fff}
+.scr{position:absolute;inset:0;overflow-y:auto;padding:18px 18px 24px;display:flex;flex-direction:column}
+.sp{background:linear-gradient(#3a2a52,#121212 55%)}
+.art{width:100%;aspect-ratio:1.5;border-radius:10px;background:linear-gradient(135deg,#ff7a59,#7a3cff);display:grid;place-items:center;font-size:44px;margin:6px 0 12px}
+.ttl{font-weight:800;font-size:20px}.sub{color:#b3b3b3;font-size:13px}
+.ly{margin:12px 0;font-size:19px;font-weight:800;line-height:1.35;color:#fff}.ly span{opacity:.45;display:block}.ly span.cur{opacity:1}
+.chip{display:flex;align-items:center;gap:8px;background:#fff;color:#111;border:0;border-radius:24px;padding:9px 8px 9px 14px;font:800 14px Figtree,sans-serif;cursor:pointer;width:max-content;max-width:100%}
+.chip i{font-style:normal;background:var(--du);color:#fff;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;font-size:12px}
+.chip u{text-decoration:none;color:#777;padding:0 6px;font-weight:600}
+.badge{display:inline-flex;gap:6px;align-items:center;background:rgba(29,185,84,.18);color:#6ff0a0;border:1px solid #1db954;border-radius:20px;padding:6px 12px;font-weight:800;font-size:13px}
+.list{margin-top:auto;padding-top:14px;border-top:1px solid #333}.row{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:13px;cursor:pointer;background:none;border:0;color:#fff;width:100%;text-align:left;font-family:inherit}
+.row .t{flex:1}.row small{color:#b3b3b3}.row.on .n{color:#6ff0a0}
+.ctl{display:flex;justify-content:center;gap:22px;align-items:center;margin:10px 0;font-size:22px}
+.pb{height:4px;background:#4d4d4d;border-radius:4px}.pb b{display:block;height:100%;width:38%;background:#fff;border-radius:4px}
+.hand{background:#0f1210;align-items:center;justify-content:center;text-align:center;gap:14px}
+.code{font:12px/1.5 ui-monospace,Menlo,monospace;background:#1c211e;border:1px solid #2f3733;padding:10px;border-radius:8px;text-align:left;word-break:break-all;color:#bfeccd}
+.spin{width:34px;height:34px;border:4px solid #2f3733;border-top-color:var(--du);border-radius:50%;animation:s 0.8s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}}
+.du{background:#fff;color:#3c3c3c}
+.bar{height:14px;background:#e5e5e5;border-radius:10px;overflow:hidden;margin:4px 0 6px}.bar b{display:block;height:100%;background:var(--du);transition:width .3s}
+.q{font-weight:800;font-size:21px;margin:16px 0 10px}
+.card{border:2px solid #e5e5e5;border-radius:16px;padding:22px;text-align:center;cursor:pointer;background:#fff;font:inherit;color:inherit;width:100%}
+.card .big{font-size:38px;font-weight:800}
+.opt{display:block;width:100%;text-align:left;border:2px solid #e5e5e5;border-bottom-width:4px;background:#fff;border-radius:14px;padding:12px 14px;font:600 16px Figtree,sans-serif;margin:8px 0;cursor:pointer;color:#3c3c3c}
+.opt.ok{border-color:var(--du);background:#d7ffb8}.opt.bad{border-color:#ea2b2b;background:#ffdfe0}
+.go{margin-top:auto;background:var(--du);color:#fff;border:0;border-bottom:4px solid var(--duD);border-radius:14px;padding:13px;font:800 16px Figtree,sans-serif;cursor:pointer;width:100%}
+.go[disabled]{background:#e5e5e5;color:#afafaf;border-bottom-color:#cfcfcf;cursor:default}
+.fb{border-radius:12px;padding:10px 12px;font-weight:600;margin:6px 0;font-size:14px}.fb.ok{background:#d7ffb8;color:#3b7a00}.fb.bad{background:#ffdfe0;color:#b02020}
+.audio{display:flex;align-items:center;gap:10px;background:#f0f7ff;border:2px solid #cde4ff;border-radius:14px;padding:8px 12px;font-weight:600}
+.audio button{width:38px;height:38px;border-radius:50%;border:0;background:#1cb0f6;color:#fff;font-size:15px;cursor:pointer}
+.stat{display:flex;gap:10px;margin:12px 0}.stat div{flex:1;border:2px solid #e5e5e5;border-radius:14px;padding:10px;text-align:center;font-weight:800;font-size:20px}.stat small{display:block;font-size:11px;color:#777;font-weight:600}
+.log{font:12px/1.55 ui-monospace,Menlo,monospace;max-height:190px;overflow-y:auto}.log div{padding:2px 0;border-bottom:1px dashed var(--line)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpis div{font-weight:800;font-size:22px}.kpis small{display:block;font-weight:400;font-size:12px;color:var(--mut)}
+ul{padding-left:18px;margin:6px 0}
+</style></head><body>
+<div class="wrap">
+ <div><div class="phone" id="phone" aria-live="polite"></div></div>
+ <div>
+  <h1>Learn this song: clickable prototype</h1>
+  <p class="mut" style="margin:0 0 12px">Walks the PRD’s four steps: Spotify CTA, deep link handoff, Duolingo micro-lesson, reward loop. Songs and lyrics are made up for the demo.</p>
+  <div class="panel"><b>Who is listening?</b> <span class="mut">(Personas)</span>
+   <div class="seg" id="persona" style="margin-top:8px"></div>
+   <h2>Learner level <span class="mut" style="font-weight:400">(songs above it hide the chip)</span></h2>
+   <div class="seg" id="level"></div>
+   <h2>Session</h2>
+   <div class="seg"><button id="reset">Reset session</button></div></div>
+  <div class="panel"><b>Funnel</b><div class="kpis" style="margin-top:8px" id="kpi"></div>
+   <p class="mut" style="margin:8px 0 0;font-size:12px">North star in the PRD: CTA → lesson completion rate above 25%.</p></div>
+  <div class="panel"><b>Event log</b><div class="log" id="log" style="margin-top:6px"><div class="mut">Tap a song in the queue to begin.</div></div></div>
+  <div class="panel"><b>What this proves</b><ul class="mut" style="font-size:13px"><li>Eligibility and CEFR filtering decide when the chip appears.</li><li>Max 1 impression per session; dismiss is permanent.</li><li>No-account users get an opt-in, then the web fallback.</li><li>Completion fires XP, streak credit and the Spotify badge.</li></ul></div>
+ </div>
+</div>
+<script>
+const LV=['A1','A2','B1','B2','C1'];
+const SONGS=[
+ {id:'kr_001',t:'Han River Nights',a:'Mira Han',em:'🌃',lang:'ko',L:'Korean',cefr:'A2',lines:['오늘 밤에 너를 생각해','별이 빛나는 하늘 아래','함께 걷고 싶어'],tr:['Tonight I think of you','Under the sky where the stars shine','I want to walk together'],
+  terms:[['별','star'],['하늘','sky'],['함께','together']],
+  drills:[{p:'오늘 밤에 너를 ___',o:['생각해','걷고','별'],c:0,ex:'생각해 = I think (of). Verb ending -해 is the casual present.'},{p:'___ 걷고 싶어',o:['하늘','함께','밤'],c:1,ex:'함께 = together. 싶어 = want to.'}],
+  chk:{q:'What does 하늘 mean?',o:['Sky','Night','Together'],c:0,ex:'하늘 = sky, from the second line.'}},
+ {id:'es_014',t:'Calle Luna',a:'Los Faroles',em:'🌙',lang:'es',L:'Spanish',cefr:'A1',lines:['Quiero bailar contigo','Esta noche en la calle','Bajo la luna'],tr:['I want to dance with you','Tonight in the street','Under the moon'],
+  terms:[['quiero','I want'],['bailar','to dance'],['luna','moon']],
+  drills:[{p:'Quiero ___ contigo',o:['bailar','luna','noche'],c:0,ex:'bailar = to dance. After quiero, use the infinitive.'},{p:'Bajo la ___',o:['calle','luna','quiero'],c:1,ex:'luna = moon. bajo = under.'}],
+  chk:{q:'What does quiero mean?',o:['I dance','I want','The street'],c:1,ex:'quiero = I want.'}},
+ {id:'fr_207',t:'Brume d’automne',a:'Élise Marchand',em:'🍂',lang:'fr',L:'French',cefr:'C1',lines:['Les souvenirs s’effilochent','Comme des fils de brume'],tr:['','']}
+];
+const PERS=[['new','No Duolingo account'],['lapsed','Lapsed learner'],['active','Active streaker']];
+let S;function fresh(){S={screen:'sp',song:0,persona:S?S.persona:'lapsed',level:S?S.level:1,dismissed:false,shown:{},unlocked:{},optin:false,ls:{},taps:0,done:0,imp:0,streak:12,log:[]}}
+fresh();S.persona='lapsed';
+const $=id=>document.getElementById(id);
+function log(m){S.log.unshift(new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'})+'  '+m);renderSide()}
+function eligible(s){return LV.indexOf(s.cefr)<=S.level&&!S.dismissed&&s.terms}
+function renderSide(){
+ $('persona').innerHTML=PERS.map(p=>`<button class="${S.persona===p[0]?'on':''}" onclick="setP('${p[0]}')">${p[1]}</button>`).join('');
+ $('level').innerHTML=LV.map((l,i)=>`<button class="${S.level===i?'on':''}" onclick="setL(${i})">${l}</button>`).join('');
+ const r=S.taps?Math.round(S.done/S.taps*100):0;
+ $('kpi').innerHTML=`<div>${S.taps}<small>CTA taps</small></div><div>${S.done}<small>Lessons completed</small></div><div>${S.taps?r+'%':'–'}<small>CTA → completion</small></div>`;
+ $('log').innerHTML=S.log.length?S.log.map(l=>'<div>'+l+'</div>').join(''):'<div class="mut">Tap a song in the queue to begin.</div>';
+}
+function setP(p){S.persona=p;S.optin=false;go('sp');log('Persona set: '+PERS.find(x=>x[0]===p)[1])}
+function setL(i){S.level=i;go('sp');log('Learner level set to '+LV[i])}
+$('reset').onclick=()=>{const p=S.persona,l=S.level;fresh();S.persona=p;S.level=l;render();log('Session reset')};
+function go(s){S.screen=s;render()}
+function pick(i){S.song=i;S.dismissed=S.dismissed;go('sp');const s=SONGS[i];const why=!s.terms?'no lesson template yet':LV.indexOf(s.cefr)>S.level?'above learner level':'';log(`Playing “${s.t}” (${s.L}, CEFR ${s.cefr}). Chip: ${eligible(s)?'eligible':'hidden'+(why?' ('+why+')':'')}`)}
+function dismiss(){S.dismissed=true;log('Chip dismissed. Hidden permanently (PRD risk mitigation).');render()}
+function tap(){
+ const s=SONGS[S.song];S.taps++;log('Tapped “Learn this song”');
+ if(S.persona==='new'&&!S.optin){S.screen='optin';render();return}
+ handoff();
+}
+function handoff(){
+ const s=SONGS[S.song],web=S.persona==='new';
+ S.screen='hand';S.web=web;render();
+ const link=`duolingo://song-lesson?track_id=${s.id}&lang=${s.lang}&source=spotify`;
+ log('Deep link fired: '+link);if(web)log('App not installed: using mobile web fallback');
+ setTimeout(()=>{S.ls={step:0,fl:0,flip:false,ans:null,xp:0,t0:Date.now(),wrong:0};S.screen='les';render();log('Lesson opened: '+s.terms.length+' key terms, '+(s.drills.length+1)+' questions')},1500);
+}
+const STEPS=s=>[...s.terms.map((_,i)=>({k:'fl',i})),...s.drills.map((d,i)=>({k:'dr',d})),{k:'ck',d:s.chk}];
+function play(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),n=[392,440,523,440,392,330];n.forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.12,c.currentTime+i*.3);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.3+.28);o.connect(g);g.connect(c.destination);o.start(c.currentTime+i*.3);o.stop(c.currentTime+i*.3+.3)});log('Audio snippet played (simulated tone)')}catch(e){}}
+function flip(){S.ls.flip=!S.ls.flip;render()}
+function next(){const s=SONGS[S.song],st=STEPS(s);S.ls.step++;S.ls.flip=false;S.ls.ans=null;if(S.ls.step>=st.length)return finish();render()}
+function answer(i){const L=S.ls;if(L.ans!==null)return;const st=STEPS(SONGS[S.song])[L.step];L.ans=i;if(i===st.d.c){L.xp+=5}else L.wrong++;render()}
+function finish(){
+ const s=SONGS[S.song],secs=Math.round((Date.now()-S.ls.t0)/1000);
+ S.done++;S.ls.secs=secs;S.ls.xp+=S.ls.wrong?0:5;S.unlocked[s.id]=true;
+ if(S.persona!=='new')S.streak++;
+ log(`Lesson complete in ${secs}s. +${S.ls.xp+10} XP. Webhook to Spotify: unlock badge for ${s.id}`);go('rew');
+}
+function render(){
+ const P=$('phone'),s=SONGS[S.song],sc=S.screen;let h='';
+ if(sc==='sp'){
+  const el=eligible(s),first=!S.shown[s.id];
+  if(el&&first){S.shown[s.id]=1;S.imp++}
+  const chip=el?`<div style="display:flex;align-items:center;gap:4px;margin:6px 0"><button class="chip" onclick="tap()" aria-label="Learn this song with Duolingo"><span>Learn this song</span><i>🦉</i></button><button class="chip" style="background:none;color:#b3b3b3;padding:6px" onclick="dismiss()" aria-label="Dismiss permanently">✕</button></div><div class="sub" style="font-size:11px">Shown once per session. Dismiss hides it for good.</div>`:'';
+  const badge=S.unlocked[s.id]?`<div class="badge" style="margin:6px 0">★ Song Unlocked</div>`:'';
+  h=`<div class="scr sp"><div class="sub">Playing from Daily Mix 2</div><div class="art">${s.em}</div><div class="ttl">${s.t}</div><div class="sub">${s.a} · ${s.L}</div>
+  <div class="pb" style="margin-top:12px"><b></b></div><div class="ctl"><span>⏮</span><span style="background:#fff;color:#000;border-radius:50%;width:42px;height:42px;display:grid;place-items:center;font-size:18px">⏸</span><span>⏭</span></div>
+  <div class="ly">${s.lines.map((l,i)=>`<span class="${i===1?'cur':''}">${l}</span>`).join('')}</div>${badge}${chip}
+  <div class="list"><div class="sub" style="margin-bottom:4px">Up next: tap to switch</div>${SONGS.map((x,i)=>`<button class="row ${i===S.song?'on':''}" onclick="pick(${i})"><span>${x.em}</span><span class="t n">${x.t}<br><small>${x.a}</small></span><small>${x.cefr}</small></button>`).join('')}</div></div>`;
+ }
+ if(sc==='optin')h=`<div class="scr hand"><div style="font-size:44px">🦉</div><div class="ttl">Turn lyrics into a 2-minute lesson?</div><div class="sub">Spotify will share the song, artist and language with Duolingo so we can build your lesson. One-time prompt.</div><button class="go" style="margin-top:8px" onclick="S.optin=true;log('Opt-in accepted');handoff()">Yes, start lesson</button><button class="chip" style="background:none;color:#b3b3b3" onclick="go('sp');log('Opt-in declined')">Not now</button></div>`;
+ if(sc==='hand')h=`<div class="scr hand"><div class="spin"></div><div class="ttl">${S.web?'Opening lesson in your browser':'Opening Duolingo'}</div><div class="code">duolingo://song-lesson?<br>track_id=${s.id}<br>&amp;lang=${s.lang}<br>&amp;source=spotify</div><div class="sub">${S.web?'Duolingo app not found. Using the lightweight web fallback.':'Passing song, artist and language.'}</div></div>`;
+ if(sc==='les'){
+  const L=S.ls,st=STEPS(s),cur=st[L.step],pct=Math.round(L.step/st.length*100);
+  let body='';
+  if(cur.k==='fl'){const t=s.terms[cur.i];body=`<div class="q">New word from the song</div><div class="mut" style="color:#777;margin-bottom:8px">“${s.lines[Math.min(cur.i,s.lines.length-1)]}”</div><button class="card" onclick="flip()" aria-label="Flip card">${L.flip?`<div class="big" style="color:#46a302">${t[1]}</div><div style="color:#777">Tap to flip back</div>`:`<div class="big">${t[0]}</div><div style="color:#777">Tap to reveal meaning</div>`}</button><button class="go" ${L.flip?'':'disabled'} onclick="next()">Continue</button>`}
+  else{const d=cur.d,a=L.ans;body=`<div class="q">${cur.k==='dr'?'Fill in the blank':'Quick check'}</div>${cur.k==='dr'?`<div class="audio"><button onclick="play()" aria-label="Play 5 second snippet">▶</button><span>5-sec snippet</span></div><div class="q" style="font-size:19px">${d.p}</div>`:`<div class="q">${d.q}</div>`}${d.o.map((o,i)=>`<button class="opt ${a===null?'':i===d.c?'ok':i===a?'bad':''}" onclick="answer(${i})">${o}</button>`).join('')}${a!==null?`<div class="fb ${a===d.c?'ok':'bad'}">${a===d.c?'Correct! ':'Not quite. '}${d.ex}</div>`:''}<button class="go" ${a===null?'disabled':''} onclick="next()">${L.step===st.length-1?'Finish':'Continue'}</button>`}
+  h=`<div class="scr du"><div style="display:flex;gap:10px;align-items:center"><button onclick="go('sp')" style="background:none;border:0;font-size:20px;color:#999;cursor:pointer" aria-label="Close lesson">✕</button><div class="bar" style="flex:1"><b style="width:${pct}%"></b></div><span style="font-weight:800;color:#ff9600">🔥 ${S.streak}</span></div>${body}<div style="font-size:11px;color:#999;text-align:center;margin-top:8px">${S.web?'Web lesson':'Song lesson'} · ${s.L} · ${s.cefr} · “${s.t}”</div></div>`;
+ }
+ if(sc==='rew'){const L=S.ls,st=S.persona==='new';h=`<div class="scr du" style="align-items:center;text-align:center"><div style="font-size:60px;margin-top:18px">🎉</div><div class="ttl" style="font-size:24px">Lesson complete</div><div class="mut" style="color:#777">You can now follow “${s.t}”.</div>
+ <div class="stat"><div style="color:#ffb100">+${L.xp+10}<small>XP</small></div><div style="color:#46a302">${L.secs}s<small>Time</small></div><div style="color:#ff9600">${st?'–':S.streak}<small>Day streak</small></div></div>
+ ${st?'<div class="fb ok" style="width:100%">Create a free account to save XP and start a streak.</div>':'<div class="fb ok" style="width:100%">Streak extended. Nice work.</div>'}
+ <div style="width:100%;border:2px solid #cfe9b8;border-radius:14px;padding:10px;margin:6px 0;background:#f4ffe9;font-weight:800;color:#46a302">★ Song Unlocked on Spotify</div>
+ <button class="go" onclick="go('sp')">Back to Spotify</button></div>`}
+ P.innerHTML=h;renderSide();
+}
+render();
+</script></body></html>
